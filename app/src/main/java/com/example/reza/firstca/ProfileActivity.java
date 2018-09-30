@@ -94,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable Integer integer) {
                 size_tv.setText(integer + "");
-                Log.d("update","size updated!");
+                Log.d("updated","size updated!");
             }
         });
 
