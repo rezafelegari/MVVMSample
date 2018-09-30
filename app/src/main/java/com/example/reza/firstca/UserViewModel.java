@@ -3,6 +3,7 @@ package com.example.reza.firstca;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -19,11 +20,16 @@ public class UserViewModel extends AndroidViewModel {
 
     private LiveData<List<UserInfo>> malluser;
 
+    private LiveData<Response<List<Search>>> movies;
 
-    public UserViewModel(@NonNull Application application) {
+    final MutableLiveData<Integer> Size;
+
+    public UserViewModel(@NonNull Application application) throws Exception {
         super(application);
         mRepository = new UserRepository(application);
         malluser = mRepository.getAlluser();
+        movies = mRepository.GrtMovie();
+        Size = new MutableLiveData<>();
     }
 
 
@@ -39,8 +45,13 @@ public class UserViewModel extends AndroidViewModel {
         mRepository.update(id, fname, lname);
     }
 
-    LiveData<Response<List<Search>>> getmovie() throws Exception {
-        LiveData<Response<List<Search>>> moveis = mRepository.GrtMovie();
-        return moveis;
+    LiveData<Response<List<Search>>> getmovie() {
+        Size.setValue(movies.getValue().getData().size());
+        return movies;
     }
+
+    public LiveData<Integer> Getsize() {
+        return Size;
+    }
+
 }

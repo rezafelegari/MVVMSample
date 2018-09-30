@@ -23,14 +23,15 @@ public class UserRepository {
     private LiveData<List<UserInfo>> users;
     AppExecutors appExecutors;
     private ApiInterface client;
+    LiveData<Response<List<Search>>> mymovie;
 
-    public UserRepository(Application application) {
-
+    public UserRepository(Application application) throws Exception {
         WordRoomDatabase db = WordRoomDatabase.getDatabase(application);
         userInfoDao = db.userInfoDao();
         users = userInfoDao.getuser();
         appExecutors = new AppExecutors();
         client = ServiceGenerator.create(ApiInterface.class);
+        mymovie = GetMovie();
     }
 
     public LiveData<List<UserInfo>> getAlluser() {
@@ -48,7 +49,10 @@ public class UserRepository {
     }
 
 
-    public LiveData<Response<List<Search>>> GrtMovie() throws Exception {
+    public LiveData<Response<List<Search>>> GrtMovie() {
+        return mymovie;
+    }
+    public LiveData<Response<List<Search>>> GetMovie() throws Exception {
         final MutableLiveData<Response<List<Search>>> data = new MutableLiveData<>();
 
         client.getMovieList()
@@ -79,5 +83,6 @@ public class UserRepository {
                 });
         return data;
     }
+
 
 }

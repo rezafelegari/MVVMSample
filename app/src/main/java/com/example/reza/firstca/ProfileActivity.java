@@ -4,8 +4,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
+import android.support.annotation.Size;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,22 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         get_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    mUserViewModel.getmovie().observe(ProfileActivity.this, new Observer<Response<List<Search>>>() {
-                        @Override
-                        public void onChanged(@Nullable Response<List<Search>> listResponse) {
-                            if (listResponse.getData() != null && listResponse.getData().size() > 0) {
-                                Toast.makeText(ProfileActivity.this, "Size:" + listResponse.getData().size() + "/n Status:" + listResponse.getStatusCode(), Toast.LENGTH_SHORT).show();
-                                size_tv.setText(listResponse.getData().size() + "");
-                            } else {
-                                Toast.makeText(ProfileActivity.this, "Statuscode" + listResponse.getStatusCode(), Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                observeViewModel(mUserViewModel);
             }
         });
 
@@ -98,11 +85,33 @@ public class ProfileActivity extends AppCompatActivity {
                     tv_lname.setText(users.get(users.size() - 1).getLastname());
                     fname_update.setText(users.get(users.size() - 1).getFirstname());
                     lname_update.setText(users.get(users.size() - 1).getLastname());
-                    userInfo = users.get(0);
+                    userInfo = users.get(users.size() - 1);
                 }
 
             }
         });
+        mUserViewModel.Getsize().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                size_tv.setText(integer + "");
+                Log.d("update","size updated!");
+            }
+        });
 
+
+    }
+
+    private void observeViewModel(UserViewModel viewModel) {
+        viewModel.getmovie().observe(this, new Observer<Response<List<Search>>>() {
+            @Override
+            public void onChanged(@Nullable Response<List<Search>> listResponse) {
+                if (listResponse.getData() != null && listResponse.getData().size() > 0) {
+                    Toast.makeText(ProfileActivity.this, "Size:" + listResponse.getData().size() + "/n Status:" + listResponse.getStatusCode(), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Statuscode" + listResponse.getStatusCode(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
