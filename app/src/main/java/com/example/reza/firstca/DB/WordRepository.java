@@ -13,7 +13,9 @@ public class WordRepository {
 
     private WordDao mWordDao;
     private LiveData<List<Word>> mAllWords;
+    private LiveData<List<Link>> mAllLink;
     AppExecutors appExecutors;
+    private LinkDao mlinkDao;
 
     // Note that in order to unit test the WordRepository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
@@ -22,7 +24,9 @@ public class WordRepository {
     public WordRepository(Application application) {
         WordRoomDatabase db = WordRoomDatabase.getDatabase(application);
         mWordDao = db.wordDao();
+        mlinkDao = db.linkDao();
         mAllWords = mWordDao.getAllWords();
+        mAllLink = mlinkDao.getAll();
         appExecutors = new AppExecutors();
     }
 
@@ -32,12 +36,22 @@ public class WordRepository {
         return mAllWords;
     }
 
+    public LiveData<List<Link>> getAllLink() {
+        return mAllLink;
+    }
+
+
     // You must call this on a non-UI thread or your app will crash.
     // Like this, Room ensures that you're not doing any long running operations on the main
     // thread, blocking the UI.
     public void insert(final Word word) {
         //new insertAsyncTask(mWordDao).execute(word);
         appExecutors.diskIO().execute(() -> mWordDao.insert(word));
+    }
+
+    public void insert(final Link link) {
+        //new insertAsyncTask(mWordDao).execute(word);
+        appExecutors.diskIO().execute(() -> mlinkDao.insert(link));
     }
 
 //    private static class insertAsyncTask extends AsyncTask<Word, Void, Void> {

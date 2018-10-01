@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.reza.firstca.Adapter.WordListAdapter;
+import com.example.reza.firstca.DB.Link;
 import com.example.reza.firstca.DB.Word;
 
 import java.util.List;
@@ -37,11 +38,18 @@ public class MainActivity extends AppCompatActivity {
         // Get a new or existing ViewModel from the ViewModelProvider.
         mWordViewModel = ViewModelProviders.of(this).get(WordViewModel.class);
 
-        mWordViewModel.getAllWords().observe(this, new Observer<List<Word>>() {
+//        mWordViewModel.getAllWords().observe(this, new Observer<List<Word>>() {
+//            @Override
+//            public void onChanged(@Nullable final List<Link> words) {
+//                // Update the cached copy of the words in the adapter.
+//                adapter.setWords(words);
+//            }
+//        });
+
+        mWordViewModel.getAllLink().observe(this, new Observer<List<Link>>() {
             @Override
-            public void onChanged(@Nullable final List<Word> words) {
-                // Update the cached copy of the words in the adapter.
-                adapter.setWords(words);
+            public void onChanged(@Nullable List<Link> links) {
+                adapter.setWords(links);
             }
         });
 
@@ -61,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Word word = new Word(data.getStringExtra(NewWordActivity.EXTRA_REPLY));
-            mWordViewModel.insert(word);
+            String title = data.getStringExtra(NewWordActivity.EXTRA_REPLY_TITLE);
+            String address = data.getStringExtra(NewWordActivity.EXTRA_REPLY_ADDRESS);
+            Link link = new Link(title, address);
+            mWordViewModel.insert(link);
         } else {
             Toast.makeText(
                     getApplicationContext(),
